@@ -1,0 +1,75 @@
+"0","reticulate::repl_python()"
+"2","Python 3.6.13 (/Users/pauljones/Library/r-miniconda/envs/r-reticulate/bin/python)
+Reticulate 1.22 REPL -- A Python interpreter in R.
+Enter 'exit' or 'quit' to exit the REPL and return to R.
+"
+"0","import pandas as pd"
+"0","import numpy as np"
+"0","import statsmodels.api as st"
+"0",""
+"0","# Number of observations"
+"0",""
+"0","N = 500"
+"0",""
+"0","# Generate data for the independent variables"
+"0","np.random.seed(4)"
+"0","x0 = np.ones(500)"
+"0","x1 = np.random.normal(0, 1, 500)"
+"0","x2 = np.random.normal(2, 4, 500)"
+"0","x3 = np.random.normal(-1, 0.5, 500)"
+"0",""
+"0","# Create independent variable and define the betas"
+"0","y = 2 + 5*x1 -2*x2 + 1.5*x3 + np.random.normal(0, 1, 500)"
+"0",""
+"0","# Create a matrix of independent variables"
+"0","x = np.column_stack((x0, x1, x2, x3))"
+"0",""
+"0","# Convert to a data frame"
+"0","df = pd.DataFrame(data = x)"
+"0",""
+"0","# Examine first 5 rows of data frame"
+"0","df[:5]"
+"1","     0         1         2         3
+0  1.0  0.050562 -1.137449 -1.065155
+1  1.0  0.499951  3.426072 -1.944436
+2  1.0 -0.995909  9.263411 -1.947148
+3  1.0  0.693599  3.353012 -1.382067
+4  1.0 -0.418302  1.802297 -0.587590
+"
+"0","# Manually calculate OLS coefficients"
+"0","beta_hat = np.dot(np.linalg.inv(np.dot(x.transpose(),x)), np.dot(x.transpose(),y))"
+"0","print(beta_hat)"
+"1","[ 2.0170067   4.99170179 -1.99570408  1.52646976]
+"
+"0","# Run OLS regression and compare results"
+"0","model = st.OLS(y, x)"
+"0","results = model.fit(cov_type = 'HC1')"
+"0","print(results.summary())"
+"1","                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.989
+Model:                            OLS   Adj. R-squared:                  0.989
+Method:                 Least Squares   F-statistic:                 1.438e+04
+Date:                Thu, 09 Dec 2021   Prob (F-statistic):               0.00
+Time:                        17:40:34   Log-Likelihood:                -691.20
+No. Observations:                 500   AIC:                             1390.
+Df Residuals:                     496   BIC:                             1407.
+Df Model:                           3                                         
+Covariance Type:                  HC1                                         
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          2.0170      0.095     21.167      0.000       1.830       2.204
+x1             4.9917      0.044    113.271      0.000       4.905       5.078
+x2            -1.9957      0.011   -177.707      0.000      -2.018      -1.974
+x3             1.5265      0.087     17.639      0.000       1.357       1.696
+==============================================================================
+Omnibus:                        3.809   Durbin-Watson:                   1.939
+Prob(Omnibus):                  0.149   Jarque-Bera (JB):                3.581
+Skew:                           0.188   Prob(JB):                        0.167
+Kurtosis:                       3.177   Cond. No.                         12.7
+==============================================================================
+
+Notes:
+[1] Standard Errors are heteroscedasticity robust (HC1)
+"
